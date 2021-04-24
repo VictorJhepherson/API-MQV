@@ -17,16 +17,9 @@ exports.RegisterSystem = async (req, res, next) => {
         query = 'CALL REGISTER_SYSTEMUSERS(?, ?)';
         const result = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
         if(result) {
-            let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, {expiresIn: "7d" });
-
-            const response = {
-                message: 'Usuário criado com sucesso',
-                token: token,
-                data: result[0] 
-            }
-            return res.status(201).send(response);
+            let token = jwt.sign({ SU_LOGINNAME: result[0].SU_LOGINNAME }, process.env.JWT_KEY, {expiresIn: "7d" });
+            return res.status(201).send({ mensagem: 'Usuário criado com sucesso', data: result[0], token: token});
         }
-
     } catch (error) {
         return res.status(500).send({ error });
     }
