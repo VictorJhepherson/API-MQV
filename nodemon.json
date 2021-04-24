@@ -1,0 +1,12 @@
+{
+    "env":{
+        "MYSQL_USER": "admin",
+        "MYSQL_PSW": "admin",
+        "MYSQL_DATABASE": "database-mqv",
+        "MYSQL_HOST": "localhost",
+        "MYSQL_PORT": 3306,
+
+        "JWT_KEY": "ApiMQV590#",
+        "URL_API": "http://localhost:5000/"
+    }
+}
