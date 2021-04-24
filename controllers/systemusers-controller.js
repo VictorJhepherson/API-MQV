@@ -4,6 +4,30 @@ const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+exports.RegisterSystem = async (req, res, next) => {
+    try 
+    {
+        const query = `SELECT * FROM SYSTEMUSERS WHERE SU_LOGINNAME = ?`;
+        var results = await mysql.execute(query, [req.body.SU_LOGINNAME]);
+        if (results.length > 0) 
+            return res.status(401).send({ message: 'Usuário já cadastrado' })
+
+        const hash = await bcrypt.hashSync(req.body.SU_PASSWORD, 10);
+
+        query = 'CALL REGISTER_SYSTEMUSERS(?, ?)';
+        const result = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
+ 
+        const response = {
+            message: 'Usuário criado com sucesso',
+            data: result[0] 
+        }
+        return res.status(201).send(response);
+
+    } catch (error) {
+        return res.status(500).send({ error });
+    }
+};
+
 exports.Login = async (req, res, next) => {
     try 
     {
@@ -19,7 +43,8 @@ exports.Login = async (req, res, next) => {
 
             return res.status(200).send({
                 message: 'Autenticado com sucesso',
-                token: token
+                token: token,
+                data: results[0]
             });
         }
         
