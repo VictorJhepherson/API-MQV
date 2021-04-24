@@ -15,10 +15,10 @@ exports.RegisterSystem = async (req, res, next) => {
         const hash = await bcrypt.hashSync(req.body.SU_PASSWORD, 10);
 
         query = 'CALL REGISTER_SYSTEMUSERS(?, ?)';
-        const result = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
-        if(result) {
-            let token = jwt.sign({ SU_LOGINNAME: result[0].SU_LOGINNAME }, process.env.JWT_KEY, {expiresIn: "7d" });
-            return res.status(201).send({ mensagem: 'Usuário criado com sucesso', data: result[0], token: token});
+        results = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
+        if(results.length > 0) {
+            let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, {expiresIn: "7d" });
+            return res.status(201).send({ mensagem: 'Usuário criado com sucesso', data: results[0], token: token});
         }
     } catch (error) {
         return res.status(500).send({ error });
