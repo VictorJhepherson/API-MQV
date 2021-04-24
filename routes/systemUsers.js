@@ -7,6 +7,6 @@ const SystemUserController = require('../controllers/systemusers-controller');
 router.post('/', SystemUserController.Login);
 router.post('/logout', login, SystemUserController.Logout);
 router.post('/refresh', login, SystemUserController.Refresh);
-router.post('/register', login, SystemUserController.RegisterSystem);
+router.post('/register', SystemUserController.RegisterSystem);
 
 module.exports = router;
