@@ -7,18 +7,18 @@ const jwt = require('jsonwebtoken');
 exports.RegisterSystem = async (req, res, next) => {
     try 
     {
-        let query = `SELECT * FROM SYSTEMUSERS WHERE SU_LOGINNAME = ?`;
-        var results = await mysql.execute(query, [req.body.SU_LOGINNAME]);
+        const query = `SELECT SU_LOGINNAME FROM SYSTEMUSERS WHERE SU_LOGINNAME = ?`;
+        const results = await mysql.execute(query, [req.body.SU_LOGINNAME]);
         if (results.length > 0) 
             return res.status(401).send({ message: 'Usuário já cadastrado' })
 
         const hash = await bcrypt.hashSync(req.body.SU_PASSWORD, 10);
 
-        query = 'CALL REGISTER_SYSTEMUSERS(?, ?)';
-        const result = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
+        const queryRegister = 'CALL REGISTER_SYSTEMUSERS(?, ?)';
+        const result = await mysql.execute(queryRegister, [req.body.SU_LOGINNAME, hash]);
 
         let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, { expiresIn: "7d" });
-        return res.status(201).send({ message: 'Usuário criado com sucesso', data: results[0], token: token});
+        return res.status(201).send({ message: 'Usuário criado com sucesso', token: token});
 
     } catch (error) {
         return res.status(500).send({ error });
