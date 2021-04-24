@@ -15,11 +15,11 @@ exports.RegisterSystem = async (req, res, next) => {
         const hash = await bcrypt.hashSync(req.body.SU_PASSWORD, 10);
 
         query = 'CALL REGISTER_SYSTEMUSERS(?, ?)';
-        results = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
-        if(results.length > 0) {
-            let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, {expiresIn: "7d" });
-            return res.status(201).send({ mensagem: 'Usuário criado com sucesso', data: results[0], token: token});
-        }
+        const result = await mysql.execute(query, [req.body.SU_LOGINNAME, hash]);
+
+        let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, { expiresIn: "7d" });
+        return res.status(201).send({ message: 'Usuário criado com sucesso', data: results[0], token: token});
+
     } catch (error) {
         return res.status(500).send({ error });
     }
@@ -55,7 +55,7 @@ exports.Login = async (req, res, next) => {
 exports.Logout = (req, res, next) => {
     try { 
         if (req.body.token != null && req.body.token != undefined) {
-            return res.status(200).send({ mensagem: 'Logout com sucesso', token: null });
+            return res.status(200).send({ message: 'Logout com sucesso', token: null });
         }
     } catch(error) {
         return res.status(500).send({ message: 'Falha no logout' });
@@ -71,12 +71,12 @@ exports.Refresh = async (req, res, next) => {
             if (results.length < 1) {
                 return res.status(401).send({ mensagem: 'Falha na autenticação'});
             } else {
-                let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, {expiresIn: "7d" });
+                let token = jwt.sign({ SU_LOGINNAME: results[0].SU_LOGINNAME }, process.env.JWT_KEY, { expiresIn: "7d" });
                 return res.status(200).send({ mensagem: 'Autenticado com sucesso', data: results[0], token: token});
             }
         }
 
-        return res.status(401).send({ mensagem: 'Falha na autenticação'});
+        return res.status(401).send({ message: 'Falha na autenticação'});
 
     } catch (error) {
         return res.status(500).send({ message: 'Falha na autenticação' });
