@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
 const systemUsers = require('./routes/systemUsers');
+const youngs = require('./routes/youngs');
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', systemUsers);
+app.use('/youngs', youngs);
 
 app.use((req, res, next) =>{
     const erro = new Error('Não encontrado');

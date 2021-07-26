@@ -17,7 +17,7 @@ exports.RegisterSystem = async (req, res, next) => {
                     if(errBcrypt){ return res.status(500).send({ error: errBcrypt }) }
                     conn.query(
                         'CALL REGISTER_SYSTEMUSERS(?, ?);', 
-                        [ req.body.SU_LOGINNAME, hash ],
+                        [req.body.SU_LOGINNAME, hash],
                         (error, result, field) => {
                             conn.release();
                             if(error) { res.status(500).send({ error: error }) }
