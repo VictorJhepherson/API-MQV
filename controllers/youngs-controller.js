@@ -53,8 +53,14 @@ exports.registerYoungs = (req, res, next) => {
 exports.getDepartaments = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) { return res.status(500).send({ error: error }) }
-        const query = `SELECT * 
-                         FROM DEPARTAMENTS
+        const query = `SELECT YOU.YOU_NAME,
+                              DP.DP_DESC,
+                              DP.DP_STATUS
+                         FROM YOUNGS YOU
+                        INNER JOIN YOUNGS_DEPARTAMENTS YDP
+                           ON YOU.YOU_ID = YDP.YOU_ID
+                        INNER JOIN DEPARTAMENTS DP
+                           ON YDP.DP_ID = DP.DP_ID
                         ORDER BY DP_DESC ASC`;
         conn.query(query, (error, results, fields) => {
             conn.release();
